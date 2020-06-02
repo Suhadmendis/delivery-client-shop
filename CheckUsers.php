@@ -22,7 +22,7 @@ if ($Command == "CheckUsers") {
    
 
 
-    $sql = "SELECT * FROM user_mast_delivery WHERE user_name =  '" . $UserName . "' and password =  '" . $Password . "' ";
+    $sql = "SELECT * FROM user_mast_rider WHERE user_name =  '" . $UserName . "' and password =  '" . $Password . "' ";
     $result = $conn->query($sql);
 
     if ($row = $result->fetch()) {
@@ -95,12 +95,12 @@ if ($Command == "CheckUsers") {
 if ($_GET["Command"] == "save_inv") {
 
 
-    $sql = "select * from user_mast_delivery where user_name='" . $_GET["user_name"] . "'";
+    $sql = "select * from user_mast_rider where user_name='" . $_GET["user_name"] . "'";
     $result = $conn->query($sql);
     if ($row1 = $result->fetch()) {
         echo "User Found !!!";
     } else {
-        $sql = "insert into user_mast_delivery(user_name,user_type, password,U_email,R_email) values ('" . $_GET["user_name"] . "', '" . $_GET["user_type"] . "', '" . $_GET["password"] . "', '" . $_GET["U_email"] . "', '" . $_GET["R_email"] . "')";
+        $sql = "insert into user_mast_rider(user_name,user_type, password,U_email,R_email) values ('" . $_GET["user_name"] . "', '" . $_GET["user_type"] . "', '" . $_GET["password"] . "', '" . $_GET["U_email"] . "', '" . $_GET["R_email"] . "')";
 //        echo $sql;
         $result = $conn->query($sql);
 //        echo "Saved";
@@ -119,7 +119,7 @@ if ($_GET["Command"] == "save_inv") {
         $mail->Password = "autoemail@123";
 
 
-        $sql = "select * from user_mast_delivery where user_name='" . $_GET["user_name"] . "'";
+        $sql = "select * from user_mast_rider where user_name='" . $_GET["user_name"] . "'";
         $result = $conn->query($sql);
 //        echo $sql;
         if ($row = $result->fetch()) {
@@ -202,7 +202,7 @@ if ($_GET["Command"] == "getdt") {
     $tb .= "<table class='table table-hover'>";
 
 
-    $sql = "select * from user_mast_delivery order by user_name desc";
+    $sql = "select * from user_mast_rider order by user_name desc";
 
 
 
@@ -236,7 +236,7 @@ if ($_GET["Command"] == "edit") {
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $conn->beginTransaction();
 
-        $sql2 = "update user_mast_delivery set user_type = '" . $_GET['user_type'] . "',user_depart = '" . $_GET['user_depart'] . "',U_email = '" . $_GET['U_email'] . "',R_email = '" . $_GET['R_email'] . "' where user_name = '" . $_GET['user_name'] . "'";
+        $sql2 = "update user_mast_rider set user_type = '" . $_GET['user_type'] . "',user_depart = '" . $_GET['user_depart'] . "',U_email = '" . $_GET['U_email'] . "',R_email = '" . $_GET['R_email'] . "' where user_name = '" . $_GET['user_name'] . "'";
 
         $result = $conn->query($sql2);
 
@@ -250,7 +250,7 @@ if ($_GET["Command"] == "edit") {
 
 if ($_GET["Command"] == "delete") {
 
-    $sql = "delete from user_mast_delivery where user_name = '" . $_GET['user_name'] . "'";
+    $sql = "delete from user_mast_rider where user_name = '" . $_GET['user_name'] . "'";
     $result = $conn->query($sql);
 
 //    $conn->commit();
