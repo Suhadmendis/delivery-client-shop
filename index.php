@@ -1,6 +1,6 @@
 <?php 
 include './CheckCookie.php';
-$cookie_name = "user";
+$cookie_name = "deliverypatneruser";
 $mo = "";
 if (isset($_COOKIE[$cookie_name])) {
 

@@ -39,19 +39,19 @@ function chk_cookie($UserName) {
 //        $_SESSION["CURRENT_DLR"] = "A111";
 
         $action = "ok";
-//        $cookie_name = "user";
+//        $cookie_name = "deliverypatneruser";
 //        $cookie_value = $UserName;
 //        setcookie($cookie_name, $cookie_value, time() + (43200), "/"); // 86400 = 1 day
 
 
 
-        $cookie_name = "user";
+        $cookie_name = "deliverypatneruser";
         $cookie_value = $UserName;
 
         $token = substr(hash('sha512', mt_rand() . microtime()), 0, 50);
         $extime = time() + 160000000;
         $domain = $_SERVER['HTTP_HOST'];
-        setcookie('user', $cookie_value, $extime, "/", $domain);
+        setcookie('deliverypatneruser', $cookie_value, $extime, "/", $domain);
 
         //$ResponseXML .= "<stat><![CDATA[" . $action . "]]></stat>";
         $time = date("H:i:s");
