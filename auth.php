@@ -31,7 +31,7 @@
         <p class="h4 mb-4">Sign in</p>
 
         <!-- Email -->
-        <input type="text" id="txtUserName" class="form-control mb-4" placeholder="E-mail">
+        <input type="text" id="txtUserName" class="form-control mb-4" placeholder="User Name">
 
         <!-- Password -->
         <input type="password" id="txtPassword" class="form-control mb-4" placeholder="Password">

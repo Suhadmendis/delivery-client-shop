@@ -38,3 +38,31 @@ if ($_GET["Command"] == "route") {
         echo $e;
     }
 }
+
+
+if ($_GET["Command"] == "generate") {
+   header('Content-Type: application/json');
+
+   
+    $objArray = Array();
+
+   
+    
+    $sql = "select * from m_order";
+    $result = $conn->query($sql);
+    $row = $result->fetchAll();
+    
+    for ($j=0; $j < sizeof($row) ; $j++) { 
+        $sql = "select * from m_store where REF = '" . $row[$j]['st_ref'] . "'";
+        $result = $conn->query($sql);
+        $row1 = $result->fetch();
+    
+        $row[$j]['Shop'] = $row1['shop_name'];
+        $row[$j]['Shop_add'] = $row1['address'];
+    }
+    
+    array_push($objArray,$row);
+
+    echo json_encode($objArray);
+    // print_r($_SESSION);
+}

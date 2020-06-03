@@ -1,7 +1,8 @@
 var vue1 = new Vue({
   el: "#app",
   data: {
-    OBJ: ""    
+    OBJ: "" ,
+    ORDERS: ""   
   },
   mounted() {
       setInterval(function () {
@@ -29,14 +30,15 @@ var vue1 = new Vue({
         
       }, 10000);
     //   alert("1");
-    
+    this.orders();
   },
   methods: {
-    // searchAgain: function () {
-    //   axios.get("server/index_data.php?Command=generate").then((response) => {
-    //     this.OBJ = JSON.parse(response.data[0]);
-    //     this.CAT = JSON.parse(response.data[1]);
-    //   });
-    // }
+    orders: function () {
+      
+      axios.get("index_data.php?Command=generate").then((response) => {
+        this.ORDERS = response.data[0];
+        console.log(this.ORDERS);
+      });
+    }
   }
 });

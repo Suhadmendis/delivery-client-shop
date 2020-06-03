@@ -82,12 +82,12 @@ position:absolute;
 
           <!-- Left -->
           <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
+            <!-- <li class="nav-item active">
               <a class="nav-link waves-effect" href="#">Home
                 <span class="sr-only">(current)</span>
               </a>
-            </li>
-            <li class="nav-item">
+            </li> -->
+            <!-- <li class="nav-item">
               <a class="nav-link waves-effect" href="https://mdbootstrap.com/docs/jquery/" target="_blank">About
                 MDB</a>
             </li>
@@ -99,7 +99,7 @@ position:absolute;
             <li class="nav-item">
               <a class="nav-link waves-effect" href="https://mdbootstrap.com/education/bootstrap/" target="_blank">Free
                 tutorials</a>
-            </li>
+            </li> -->
           </ul>
 
           <!-- Right -->
@@ -131,7 +131,165 @@ position:absolute;
   <main class="pt-5 mx-lg-5" id="app">
     <div class="container-fluid mt-5">
 
-     
+     <!--Grid row-->
+      <div class="row wow fadeIn">
+
+        <!--Grid column-->
+        <div class="col-md-6 mb-4">
+          
+          <div class="row">
+
+            <div class="col-md-6 mb-4" v-for="order in ORDERS">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">{{ order.Shop }}</h5>
+
+                  <p class="card-text">Pick up - {{ order.Shop_add }}</p>
+                  <p class="card-text">Drop off- {{ order.address }}</p>
+                  <p class="card-text">{{ order.Shop }}</p>
+                  <p class="card-text">{{ order.Shop }}</p>
+
+                  <a class="card-link">Call</a>
+                  <a class="card-link" href="https://www.google.com/maps/dir/?api=1&origin=34.1030032,-118.41046840000001&destination=34.059808,-118.368152">Direction</a>
+                </div>
+                <a href="#" class="btn btn-primary btn-sm">Start</a>
+              </div>
+            </div>
+
+
+REF:"OD/0000068"
+Shop:"Cake Shop"
+address:"No 44, Beach Road"
+cancel:"0"
+city:"Colombo 1"
+date:"2020-04-30"
+del_tot:"1629.00"
+id:"90"
+lat:"6.875636"
+lng:"79.869300"
+phone:"077808104"
+reg_name:"akila mendis"
+reg_ref:"REG/0000013"
+st_ref:"ST/0000045"
+status:"DONE"
+sub_tot:"1629.00"
+sys_time:"2020-04-30 13:14:20"
+tot:"1629.00"
+uniq:"5eaa81d43f991"
+user: 
+
+
+
+          </div>
+
+        </div>
+        <!--Grid column-->
+
+        <!--Grid column-->
+        <div class="col-md-6 mb-4">
+
+          <!--Card-->
+          <div class="card">
+
+            <!--Card content-->
+            <div class="card-body">
+
+              <!-- Table  -->
+              <table class="table table-hover">
+                <!-- Table head -->
+                <thead class="blue lighten-4">
+                  <tr>
+                    <th>#</th>
+                    <th>Lorem</th>
+                    <th>Ipsum</th>
+                    <th>Dolor</th>
+                  </tr>
+                </thead>
+                <!-- Table head -->
+
+                <!-- Table body -->
+                <tbody>
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>Cell 1</td>
+                    <td>Cell 2</td>
+                    <td>Cell 3</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">2</th>
+                    <td>Cell 4</td>
+                    <td>Cell 5</td>
+                    <td>Cell 6</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td>Cell 7</td>
+                    <td>Cell 8</td>
+                    <td>Cell 9</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td>Cell 7</td>
+                    <td>Cell 8</td>
+                    <td>Cell 9</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td>Cell 7</td>
+                    <td>Cell 8</td>
+                    <td>Cell 9</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td>Cell 7</td>
+                    <td>Cell 8</td>
+                    <td>Cell 9</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td>Cell 7</td>
+                    <td>Cell 8</td>
+                    <td>Cell 9</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td>Cell 7</td>
+                    <td>Cell 8</td>
+                    <td>Cell 9</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td>Cell 7</td>
+                    <td>Cell 8</td>
+                    <td>Cell 9</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td>Cell 7</td>
+                    <td>Cell 8</td>
+                    <td>Cell 9</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td>Cell 7</td>
+                    <td>Cell 8</td>
+                    <td>Cell 9</td>
+                  </tr>
+                </tbody>
+                <!-- Table body -->
+              </table>
+              <!-- Table  -->
+
+            </div>
+
+          </div>
+          <!--/.Card-->
+
+        </div>
+        <!--Grid column-->
+
+      </div>
+      <!--Grid row-->
 
       <!--Grid row-->
       <div class="row wow fadeIn" style="display: none;">
@@ -217,121 +375,7 @@ position:absolute;
       </div>
       <!--Grid row-->
 
-      <!--Grid row-->
-      <div class="row wow fadeIn">
-
-        <!--Grid column-->
-        <div class="col-md-6 mb-4">
-
-          <!--Card-->
-          <div class="card">
-
-            <!--Card content-->
-            <div class="card-body">
-
-              <!-- Table  -->
-              <table class="table table-hover">
-                <!-- Table head -->
-                <thead class="blue-grey lighten-4">
-                  <tr>
-                    <th>#</th>
-                    <th>Lorem</th>
-                    <th>Ipsum</th>
-                    <th>Dolor</th>
-                  </tr>
-                </thead>
-                <!-- Table head -->
-
-                <!-- Table body -->
-                <tbody>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>Cell 1</td>
-                    <td>Cell 2</td>
-                    <td>Cell 3</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">2</th>
-                    <td>Cell 4</td>
-                    <td>Cell 5</td>
-                    <td>Cell 6</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td>Cell 7</td>
-                    <td>Cell 8</td>
-                    <td>Cell 9</td>
-                  </tr>
-                </tbody>
-                <!-- Table body -->
-              </table>
-              <!-- Table  -->
-
-            </div>
-
-          </div>
-          <!--/.Card-->
-
-        </div>
-        <!--Grid column-->
-
-        <!--Grid column-->
-        <div class="col-md-6 mb-4">
-
-          <!--Card-->
-          <div class="card">
-
-            <!--Card content-->
-            <div class="card-body">
-
-              <!-- Table  -->
-              <table class="table table-hover">
-                <!-- Table head -->
-                <thead class="blue lighten-4">
-                  <tr>
-                    <th>#</th>
-                    <th>Lorem</th>
-                    <th>Ipsum</th>
-                    <th>Dolor</th>
-                  </tr>
-                </thead>
-                <!-- Table head -->
-
-                <!-- Table body -->
-                <tbody>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>Cell 1</td>
-                    <td>Cell 2</td>
-                    <td>Cell 3</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">2</th>
-                    <td>Cell 4</td>
-                    <td>Cell 5</td>
-                    <td>Cell 6</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td>Cell 7</td>
-                    <td>Cell 8</td>
-                    <td>Cell 9</td>
-                  </tr>
-                </tbody>
-                <!-- Table body -->
-              </table>
-              <!-- Table  -->
-
-            </div>
-
-          </div>
-          <!--/.Card-->
-
-        </div>
-        <!--Grid column-->
-
-      </div>
-      <!--Grid row-->
+      
 
       <!--Grid row-->
       <div class="row wow fadeIn"  style="display: none;">
