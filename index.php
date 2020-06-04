@@ -144,39 +144,25 @@ position:absolute;
                 <div class="card-body">
                   <h5 class="card-title">{{ order.Shop }}</h5>
 
+                  <p class="card-text">Order - {{ order.REF }}</p>
                   <p class="card-text">Pick up - {{ order.Shop_add }}</p>
-                  <p class="card-text">Drop off- {{ order.address }}</p>
-                  <p class="card-text">{{ order.Shop }}</p>
-                  <p class="card-text">{{ order.Shop }}</p>
+                  <p class="card-text">Drop off - {{ order.address }}</p>
+                  <p class="card-text">{{ getDistance() }}</p>
 
-                  <a class="card-link">Call</a>
-                  <a class="card-link" href="https://www.google.com/maps/dir/?api=1&origin=34.1030032,-118.41046840000001&destination=34.059808,-118.368152">Direction</a>
+                  <a class="card-link" href="tel:123-456-7890">{{ order.phone }}</a>
+                  <a class="card-link" target="_blank" v-bind:href="'https://www.google.com/maps/dir/?api=1&origin=6.858355,79.869557&destination='+ order.Shop_lat +','+ order.Shop_lng" v-if="order.status == 'PLACE'">Direction</a>
+                  <a class="card-link" target="_blank" v-bind:href="'https://www.google.com/maps/dir/?api=1&origin=6.858355,79.869557&destination='+ order.Shop_lat +','+ order.Shop_lng" v-if="order.status == 'PICKUP'">Direction</a>
+                  <a class="card-link" target="_blank" v-bind:href="'https://www.google.com/maps/dir/?api=1&origin='+ order.Shop_lat +','+ order.Shop_lng +'&destination='+ order.lat +','+ order.lng" v-if="order.status == 'DROPOFF'">Direction</a>
+                  <!-- <a class="card-link" v-bind:href="'https://www.google.com/maps/dir/?api=1&origin=34.1030032,-118.41046840000001&destination='+ order.Shop_lat +','+ order.Shop_lat">Direction</a> -->
                 </div>
-                <a href="#" class="btn btn-primary btn-sm">Start</a>
+                <a href="#" class="btn btn-primary btn-sm" @click="changeRiderStatus(order.REF,'PICKUP')" v-if="order.status == 'PLACE'">Start</a>
+                <a href="#" class="btn btn-warning btn-sm" @click="changeRiderStatus(order.REF,'DROPOFF')" v-if="order.status == 'PICKUP'">Pick Up</a>
+                <a href="#" class="btn btn-danger btn-sm" @click="changeRiderStatus(order.REF,'DONE')" v-if="order.status == 'DROPOFF'">Drop Off</a>
+                <a href="#" class="btn btn-success btn-sm" @click="changeRiderStatus(order.REF,'DONE')" v-if="order.status == 'DONE'">Done</a>
               </div>
             </div>
 
 
-REF:"OD/0000068"
-Shop:"Cake Shop"
-address:"No 44, Beach Road"
-cancel:"0"
-city:"Colombo 1"
-date:"2020-04-30"
-del_tot:"1629.00"
-id:"90"
-lat:"6.875636"
-lng:"79.869300"
-phone:"077808104"
-reg_name:"akila mendis"
-reg_ref:"REG/0000013"
-st_ref:"ST/0000045"
-status:"DONE"
-sub_tot:"1629.00"
-sys_time:"2020-04-30 13:14:20"
-tot:"1629.00"
-uniq:"5eaa81d43f991"
-user: 
 
 
 
@@ -1560,8 +1546,8 @@ user:
   </script>
 
 
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCA5xjTtbh10z00iZuR9cvqgWGRmbQB5R0">
-    </script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClBKRU9iKfSLnXVTvdv11RvKwpCrfdoQI">
+</script>
 
     
 <script src="js/user.js"></script>
