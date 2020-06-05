@@ -5,19 +5,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-$servername = 'localhost';
-$username = 'root';
-$password = '';
-$port = 3306;
-$dbname = 'shop';
-
-
-
-// $servername = '162.252.83.203';
-// $username = 'quotrolk';
-// $password = ':8s7DLa5Wd3B!u';
+// $servername = 'localhost';
+// $username = 'root';
+// $password = '';
 // $port = 3306;
-// $dbname = 'quotrolk_shop';
+// $dbname = 'shop';
+
+
+
+$servername = '162.252.83.203';
+$username = 'quotrolk';
+$password = ':8s7DLa5Wd3B!u';
+$port = 3306;
+$dbname = 'quotrolk_shop';
 
 
 
