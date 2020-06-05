@@ -147,12 +147,14 @@ position:absolute;
                   <p class="card-text">Order - {{ order.REF }}</p>
                   <p class="card-text">Pick up - {{ order.Shop_add }}</p>
                   <p class="card-text">Drop off - {{ order.address }}</p>
-                  <p class="card-text">{{ getDistance() }}</p>
+                  <p class="card-text">{{ order.distance }}</p>
+                  <p class="card-text">{{ order.duration }}</p>
 
-                  <a class="card-link" href="tel:123-456-7890">{{ order.phone }}</a>
-                  <a class="card-link" target="_blank" v-bind:href="'https://www.google.com/maps/dir/?api=1&origin=6.858355,79.869557&destination='+ order.Shop_lat +','+ order.Shop_lng" v-if="order.status == 'PLACE'">Direction</a>
-                  <a class="card-link" target="_blank" v-bind:href="'https://www.google.com/maps/dir/?api=1&origin=6.858355,79.869557&destination='+ order.Shop_lat +','+ order.Shop_lng" v-if="order.status == 'PICKUP'">Direction</a>
-                  <a class="card-link" target="_blank" v-bind:href="'https://www.google.com/maps/dir/?api=1&origin='+ order.Shop_lat +','+ order.Shop_lng +'&destination='+ order.lat +','+ order.lng" v-if="order.status == 'DROPOFF'">Direction</a>
+
+                  <a class="card-link" v-bind:href="'tel:' + order.phone">{{ order.phone }}</a>
+                  <a class="card-link" target="_blank" v-bind:href="'https://www.google.com/maps/dir/?api=1&origin=' + locationLat + ',' + locationLng + '&destination='+ order.Shop_lat +','+ order.Shop_lng" v-if="order.status == 'PLACE'">Direction</a>
+                  <a class="card-link" target="_blank" v-bind:href="'https://www.google.com/maps/dir/?api=1&origin=' + locationLat + ',' + locationLng + '&destination='+ order.Shop_lat +','+ order.Shop_lng" v-if="order.status == 'PICKUP'">Direction</a>
+                  <a class="card-link" target="_blank" v-bind:href="'https://www.google.com/maps/dir/?api=1&origin=' + locationLat + ',' + locationLng + '&destination='+ order.lat +','+ order.lng" v-if="order.status == 'DROPOFF'">Direction</a>
                   <!-- <a class="card-link" v-bind:href="'https://www.google.com/maps/dir/?api=1&origin=34.1030032,-118.41046840000001&destination='+ order.Shop_lat +','+ order.Shop_lat">Direction</a> -->
                 </div>
                 <a href="#" class="btn btn-primary btn-sm" @click="changeRiderStatus(order.REF,'PICKUP')" v-if="order.status == 'PLACE'">Start</a>
@@ -176,90 +178,30 @@ position:absolute;
 
           <!--Card-->
           <div class="card">
-
             <!--Card content-->
             <div class="card-body">
+              <h5 class="card-title">Completed Orders</h5>
 
               <!-- Table  -->
               <table class="table table-hover">
                 <!-- Table head -->
                 <thead class="blue lighten-4">
-                  <tr>
-                    <th>#</th>
-                    <th>Lorem</th>
-                    <th>Ipsum</th>
-                    <th>Dolor</th>
+                  <tr >
+                    <th>Order</th>
+                    <th>Customer</th>
+                    <th>Address</th>
+                    <th>Total</th>
                   </tr>
                 </thead>
                 <!-- Table head -->
 
                 <!-- Table body -->
                 <tbody>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>Cell 1</td>
-                    <td>Cell 2</td>
-                    <td>Cell 3</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">2</th>
-                    <td>Cell 4</td>
-                    <td>Cell 5</td>
-                    <td>Cell 6</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td>Cell 7</td>
-                    <td>Cell 8</td>
-                    <td>Cell 9</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td>Cell 7</td>
-                    <td>Cell 8</td>
-                    <td>Cell 9</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td>Cell 7</td>
-                    <td>Cell 8</td>
-                    <td>Cell 9</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td>Cell 7</td>
-                    <td>Cell 8</td>
-                    <td>Cell 9</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td>Cell 7</td>
-                    <td>Cell 8</td>
-                    <td>Cell 9</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td>Cell 7</td>
-                    <td>Cell 8</td>
-                    <td>Cell 9</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td>Cell 7</td>
-                    <td>Cell 8</td>
-                    <td>Cell 9</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td>Cell 7</td>
-                    <td>Cell 8</td>
-                    <td>Cell 9</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td>Cell 7</td>
-                    <td>Cell 8</td>
-                    <td>Cell 9</td>
+                  <tr v-for="doneorder in DONEORDERS">
+                    <th scope="row">{{ doneorder.REF }}</th>
+                    <td>{{ doneorder.reg_name }}</td>
+                    <td>{{ doneorder.address }}</td>
+                    <td>{{ doneorder.tot }}</td>
                   </tr>
                 </tbody>
                 <!-- Table body -->

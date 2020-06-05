@@ -40,7 +40,7 @@ if ($_GET["Command"] == "route") {
 }
 
 
-if ($_GET["Command"] == "generate") {
+if ($_GET["Command"] == "doneOrders") {
    header('Content-Type: application/json');
 
    
@@ -48,7 +48,24 @@ if ($_GET["Command"] == "generate") {
 
    
     
-    $sql = "select * from m_order where status <> 'DONE' and rider_name = '" . $_SESSION["CURRENT_USER"] . "' or rider_name is null";
+    $sql = "select * from m_order where status = 'DONE' and rider_name = '" . $_SESSION["CURRENT_USER"] . "'";
+    $result = $conn->query($sql);
+    $row = $result->fetchAll();
+    
+    
+    
+    array_push($objArray,$row);
+
+    echo json_encode($objArray);
+    
+}
+
+if ($_GET["Command"] == "generate") {
+   header('Content-Type: application/json');
+
+    $objArray = Array();
+
+    $sql = "select * from m_order where status <> 'DONE' and rider_name = '" . $_SESSION["CURRENT_USER"] . "' or rider_name is null limit 3";
     $result = $conn->query($sql);
     $row = $result->fetchAll();
     
@@ -61,9 +78,36 @@ if ($_GET["Command"] == "generate") {
         $row[$j]['Shop_add'] = $row1['address'];
         $row[$j]['Shop_lat'] = $row1['loctaion_point_lat'];
         $row[$j]['Shop_lng'] = $row1['loctaion_point_lng'];
+
+        $response = file_get_contents('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=40.6655101,-73.89188969999998&destinations=40.6755101,-73.89188969999998&key=AIzaSyClBKRU9iKfSLnXVTvdv11RvKwpCrfdoQI');
+        $response = json_decode($response);
+
+        $distance = $response->rows[0]->elements[0];
+        $duration = $response->rows[0]->elements[0];
+
+        $row[$j]['distance'] = $distance->distance->text;
+        $row[$j]['duration'] = $duration->duration->text;
+
     }
     
     array_push($objArray,$row);
+
+    echo json_encode($objArray);
+    // print_r($objArray);
+}
+
+
+if ($_GET["Command"] == "getLoc") {
+   header('Content-Type: application/json');
+
+    $objArray = Array();
+
+    
+        $response = file_get_contents('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=40.6655101,-73.89188969999998&destinations=40.6905615%2C-73.9976592%7C40.6905615%2C-73.9976592%7C40.6905615%2C-73.9976592%7C40.6905615%2C-73.9976592%7C40.6905615%2C-73.9976592%7C40.6905615%2C-73.9976592%7C40.659569%2C-73.933783%7C40.729029%2C-73.851524%7C40.6860072%2C-73.6334271%7C40.598566%2C-73.7527626%7C40.659569%2C-73.933783%7C40.729029%2C-73.851524%7C40.6860072%2C-73.6334271%7C40.598566%2C-73.7527626&key=AIzaSyClBKRU9iKfSLnXVTvdv11RvKwpCrfdoQI');
+        $response = json_decode($response);
+     
+    
+    array_push($objArray,$response);
 
     echo json_encode($objArray);
     
