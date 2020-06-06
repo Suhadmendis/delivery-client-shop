@@ -5,6 +5,7 @@ var vue1 = new Vue({
     ORDERS: "",
     SHOPS: "",
     SHORTEST_SHOP: "",
+    loading: false,
     DONEORDERS: "",
     locationLat: "",
     locationLng: "",
@@ -59,7 +60,8 @@ var vue1 = new Vue({
       // }, 2000);
     },
     orders: function () {
-      console.log(this.locationLat + " : " + this.locationLng);
+      // console.log(this.locationLat + " : " + this.locationLng);
+      this.loading = true;
       axios
         .get(
           "multi_data.php?Command=generate&lat=" +
@@ -71,6 +73,7 @@ var vue1 = new Vue({
           this.ORDERS = response.data[0];
           this.SHOPS = response.data[1];
           this.SHORTEST_SHOP = response.data[2];
+          this.loading = false;
           // console.log(response.data[0]);
         });
     },
@@ -103,6 +106,13 @@ var vue1 = new Vue({
         this.DONEORDERS = response.data[0];
         console.log(response.data[0]);
       });
+    },
+    dropOff: function (orderRef) {
+      axios
+        .get("multi_data.php?Command=dropOff&ref=" + orderRef)
+        .then((response) => {
+          this.orders();
+        });
     },
     changeRiderStatus: function (orders) {
       var ordersArray = [];

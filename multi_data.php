@@ -70,10 +70,27 @@ if ($_GET["Command"] == "generate") {
 
     
 
-    $sql = "select * from m_order where status <> 'DONE' and rider_name = '" . $_SESSION["CURRENT_USER"] . "' or rider_name is null";   
+
+    $sql = "select * from m_order where status = 'DELIVERY' and rider_name = '" . $_SESSION["CURRENT_USER"] . "' and delivery_type = 'MUL'";   
     $result = $conn->query($sql);
     $customers = $result->fetchAll();
     
+  
+    if(sizeof($customers) > 0){
+        $sql = "select * from m_order where status = 'DELIVERY' and rider_name = '" . $_SESSION["CURRENT_USER"] . "' and delivery_type = 'MUL'";   
+        $result = $conn->query($sql);
+        $customers = $result->fetchAll();
+    }else{
+       $sql = "select * from m_order where status <> 'DONE' and status <> 'DELIVERED' and rider_name = '" . $_SESSION["CURRENT_USER"] . "' or rider_name is null";   
+        $result = $conn->query($sql);
+        $customers = $result->fetchAll();    
+    }
+    
+    
+  
+        
+
+
     
     for ($j=0; $j < sizeof($customers) ; $j++) { 
 
@@ -135,9 +152,13 @@ if ($_GET["Command"] == "generate") {
 
         $shopRefArray = array_unique($shopRefArray);
 
+        $shopRefArray = array_values($shopRefArray);
+        
         for ($j=0; $j < sizeof($shopRefArray) ; $j++) { 
 
-            $sqlSub = "select * from m_store where REF = '" . $shopRefArray[$j] . "'";   
+            $sqlSub = "select * from m_store where REF = '" . $shopRefArray[$j] . "'"; 
+            // echo $sqlSub;  
+            // echo '---------------------------';  
             $result = $conn->query($sqlSub);
             $shopRefArray[$j] = $result->fetch();
 
@@ -212,10 +233,25 @@ if ($_GET["Command"] == "generate") {
         }
 
 
-        // print_r($shortest_shop);
+        
+        //check the shortest_shop is valid or not
+        $valid = 1;
+        for ($j=0; $j < sizeof($orderArray) ; $j++) {
+            for ($x=0; $x < sizeof($orderArray[$j]['shops']) ; $x++) {
+                if($orderArray[$j]['shops'][$x]['status'] != "DELIVERY"){
+                    $valid = 0;
+                }
+            }
+        }
 
+
+        if($valid == 1){
+            $shortest_shop = Array();
+        }
 
         array_push($objArray,$shortest_shop);
+
+
 
         echo json_encode($objArray);
 
@@ -380,6 +416,36 @@ if ($_GET["Command"] == "changeRiderStatus") {
         echo $e;
     }
 }
+
+
+if ($_GET["Command"] == "dropOff") {
+    
+    try {
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $conn->beginTransaction();
+
+       
+        
+
+        
+        $sql2 = "update m_order set status = 'DELIVERED' where REF = '" . $_GET['ref'] . "'";
+        $result = $conn->query($sql2);
+         
+            
+        
+
+
+       
+
+
+        echo 'DONE';
+        $conn->commit();
+    } catch (Exception $e) {
+        $conn->rollBack();
+        echo $e;
+    }
+}
+
 
 
 
