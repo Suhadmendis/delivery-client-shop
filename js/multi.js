@@ -3,6 +3,8 @@ var vue1 = new Vue({
   data: {
     OBJ: "",
     ORDERS: "",
+    SHOPS: "",
+    SHORTEST_SHOP: "",
     DONEORDERS: "",
     locationLat: "",
     locationLng: "",
@@ -15,7 +17,7 @@ var vue1 = new Vue({
     //         if (position.coords.latitude) {
     //           axios
     //             .get(
-    //               "index_data.php?Command=route&lat=" +
+    //               "multi_data.php?Command=route&lat=" +
     //                 position.coords.latitude +
     //                 "&lng=" +
     //                 position.coords.longitude
@@ -24,7 +26,7 @@ var vue1 = new Vue({
     //               console.log(error);
     //             })
     //             .then((response) => {
-                  
+
     //             });
     //         }
     //       },
@@ -34,11 +36,10 @@ var vue1 = new Vue({
     // }, 10000);
 
     //   alert("1");
-    // this.updateLoc();
+    this.updateLoc();
 
-    
-      this.orders();
-    
+    this.orders();
+
     this.doneOrders();
     // setInterval(() => {
     //   this.updateLoc();
@@ -61,21 +62,23 @@ var vue1 = new Vue({
       console.log(this.locationLat + " : " + this.locationLng);
       axios
         .get(
-          "index_data.php?Command=generate&lat=" +
+          "multi_data.php?Command=generate&lat=" +
             this.locationLat +
             "&lng=" +
             this.locationLng
         )
         .then((response) => {
           this.ORDERS = response.data[0];
-          console.log(response.data[0]);
+          this.SHOPS = response.data[1];
+          this.SHORTEST_SHOP = response.data[2];
+          // console.log(response.data[0]);
         });
     },
 
     updateOrder: function (ref) {
       axios
         .get(
-          "index_data.php?Command=updateOrder&ref=" +
+          "multi_data.php?Command=updateOrder&ref=" +
             ref +
             "&lat=" +
             this.locationLat +
@@ -87,38 +90,59 @@ var vue1 = new Vue({
           // console.log(response.data[0][0].REF);
 
           for (var i = 0; i < this.ORDERS.length; i++) {
-            
             if (this.ORDERS[i].REF == response.data[0][0].REF) {
               this.ORDERS[i].distance = response.data[0][0].distance;
               this.ORDERS[i].status = response.data[0][0].status;
-              
             }
           }
           // console.log(response.data[0][0].distance);
         });
     },
     doneOrders: function () {
-      axios.get("index_data.php?Command=doneOrders").then((response) => {
+      axios.get("multi_data.php?Command=doneOrders").then((response) => {
         this.DONEORDERS = response.data[0];
         console.log(response.data[0]);
       });
     },
-    changeRiderStatus: function (Ref, status) {
+    changeRiderStatus: function (orders) {
+      var ordersArray = [];
+      for (var i = 0; i < orders.length; i++) {
+        ordersArray.push(orders[i].REF);
+      }
+      ordersArray = JSON.stringify(ordersArray);
       axios
         .get(
-          "index_data.php?Command=changeRiderStatus&REF=" +
-            Ref +
-            "&status=" +
-            status
+          "multi_data.php?Command=changeRiderStatus&REFS=" +
+            ordersArray +
+            "&shopRef=" +
+            this.SHORTEST_SHOP.REF
         )
         .then((response) => {
-          if (status == "DONE") {
-            this.doneOrders();
-            this.orders();
-
-          }
-
-          this.ORDERS = response.data[0];
+          console.log(response);
+          this.orders();
+        });
+    },
+    calprogress: function (shop) {
+      console.log(shop);
+      var count = 0;
+      for (var i = 0; i < shop.length; i++) {
+        if (shop[i].status == "DELIVERY") {
+          ++count;
+        }
+      }
+      return count;
+    },
+    startRiderStatus: function (orders) {
+      var ordersArray = [];
+      for (var i = 0; i < orders.length; i++) {
+        ordersArray.push(orders[i].REF);
+      }
+      ordersArray = JSON.stringify(ordersArray);
+      axios
+        .get("multi_data.php?Command=startRiderStatus&REFS=" + ordersArray)
+        .then((response) => {
+          console.log(response);
+          this.orders();
         });
     },
     changeDistance: function () {

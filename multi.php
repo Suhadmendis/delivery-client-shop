@@ -82,13 +82,13 @@ position:absolute;
 
           <!-- Left -->
           <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-              <a class="nav-link waves-effect" >Single Order
+            <li class="nav-item">
+              <a class="nav-link waves-effect" href="index.php">Single Order
                 <span class="sr-only">(current)</span>
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link waves-effect" href="multi.php">Multiple Orders</a>
+            <li class="nav-item active">
+              <a class="nav-link waves-effect" >Multiple Orders</a>
             </li>
             <!-- <li class="nav-item">
               <a class="nav-link waves-effect" href="https://mdbootstrap.com/docs/jquery/getting-started/download/"
@@ -138,28 +138,47 @@ position:absolute;
           
           <div class="row">
 
-            <div class="col-md-6 mb-4" >
+            <div class="col-md-12 mb-4" >
               <div class="card">
                 <div class="card-body">
-                  <h5 class="card-title">{{ ORDERS.Shop }}</h5>
+                  <h5 class="card-title"> {{ ORDERS.length }} - Orders and {{ SHOPS.length }} - Shops</h5>
 
-                  <p class="card-text">Order - {{ ORDERS.REF }}</p>
-                  <p class="card-text">Pick up - {{ ORDERS.Shop_add }}</p>
-                  <p class="card-text">Drop off - {{ ORDERS.address }}</p>
+                  <div v-for="order in ORDERS">
+                    <nav aria-label="breadcrumb">
+                      <ol class="breadcrumb">
+                        <li class="breadcrumb-item active">Order - {{ order.REF }}</li>
+                        <ul>
+                          <li> {{ calprogress(order.shops) }} / {{ order.shops.length }} Shops</li>
+                        </ul>
+                        <ul>
+                          <button type="button" class="btn btn-warning btn-sm" v-if="calprogress(order.shops) != order.shops.length">Pending</button>
+                          <button type="button" class="btn btn-primary btn-sm" v-if="calprogress(order.shops) == order.shops.length">Go</button>
+                        </ul>
+
+                      </ol>
+
+                    </nav>
+                    
+                  </div>
                   <!-- <p class="card-text">{{ order.distance }}</p> -->
                   <!-- <p class="card-text">{{ order.duration }}</p> -->
 
 
-                  <a class="card-link" v-bind:href="'tel:' + ORDERS.phone">{{ ORDERS.phone }}</a>
-                  <a class="card-link" target="_blank" v-bind:href="'https://www.google.com/maps/dir/?api=1&origin=' + locationLat + ',' + locationLng + '&destination='+ ORDERS.Shop_lat +','+ ORDERS.Shop_lng" v-if="ORDERS.status == 'PLACE'">Direction</a>
-                  <a class="card-link" target="_blank" v-bind:href="'https://www.google.com/maps/dir/?api=1&origin=' + locationLat + ',' + locationLng + '&destination='+ ORDERS.Shop_lat +','+ ORDERS.Shop_lng" v-if="ORDERS.status == 'PICKUP'">Direction</a>
-                  <a class="card-link" target="_blank" v-bind:href="'https://www.google.com/maps/dir/?api=1&origin=' + locationLat + ',' + locationLng + '&destination='+ ORDERS.lat +','+ ORDERS.lng" v-if="ORDERS.status == 'DROPOFF'">Direction</a>
+                  <a class="card-link" v-bind:href="'tel:' + SHORTEST_SHOP.phone_number_1">Call {{ SHORTEST_SHOP.shop_name }} - {{ SHORTEST_SHOP.phone_number_1 }}</a>
+                  <a class="card-link" target="_blank" v-bind:href="'https://www.google.com/maps/dir/?api=1&origin=' + locationLat + ',' + locationLng + '&destination='+ SHORTEST_SHOP.loctaion_point_lat +','+ SHORTEST_SHOP.loctaion_point_lng" >Direction</a>
+                  <a class="card-link">{{ SHORTEST_SHOP.dura / 1000 }} KM</a>
+                  <!-- <a class="card-link" target="_blank" v-bind:href="'https://www.google.com/maps/dir/?api=1&origin=' + locationLat + ',' + locationLng + '&destination='+ ORDERS.Shop_lat +','+ ORDERS.Shop_lng" v-if="ORDERS.status == 'PICKUP'">Direction</a>
+                  <a class="card-link" target="_blank" v-bind:href="'https://www.google.com/maps/dir/?api=1&origin=' + locationLat + ',' + locationLng + '&destination='+ ORDERS.lat +','+ ORDERS.lng" v-if="ORDERS.status == 'DROPOFF'">Direction</a> -->
                   <!-- <a class="card-link" v-bind:href="'https://www.google.com/maps/dir/?api=1&origin=34.1030032,-118.41046840000001&destination='+ order.Shop_lat +','+ order.Shop_lat">Direction</a> -->
                 </div>
-                <a href="#" class="btn btn-primary btn-sm" @click="changeRiderStatus(ORDERS.REF,'PICKUP')" v-if="ORDERS.status == 'PLACE'">Start</a>
+
+                <a href="#" class="btn btn-primary btn-sm" @click="startRiderStatus(ORDERS)" v-if="ORDERS[0].status == 'PLACE'">Start</a>
+                <a href="#" class="btn btn-warning btn-sm" @click="changeRiderStatus(ORDERS)" v-if="ORDERS[0].status == 'DELIVERY'">Pick up - {{ SHORTEST_SHOP.shop_name }}</a>
                 <a href="#" class="btn btn-warning btn-sm" @click="changeRiderStatus(ORDERS.REF,'DROPOFF')" v-if="ORDERS.status == 'PICKUP'">Pick Up</a>
                 <a href="#" class="btn btn-danger btn-sm" @click="changeRiderStatus(ORDERS.REF,'DONE')" v-if="ORDERS.status == 'DROPOFF'">Drop Off</a>
                 <a href="#" class="btn btn-success btn-sm" @click="changeRiderStatus(ORDERS.REF,'DONE')" v-if="ORDERS.status == 'DONE'">Done</a>
+
+                
               </div>
             </div>
 
@@ -1492,7 +1511,7 @@ position:absolute;
 
     
 <script src="js/user.js"></script>
-<script src="js/index.js"></script>
+<script src="js/multi.js"></script>
 
 </body>
 
