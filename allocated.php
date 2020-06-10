@@ -83,7 +83,7 @@ position:absolute;
           <!-- Left -->
           <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-              <a class="nav-link waves-effect" href="">Single Order
+              <a class="nav-link waves-effect" href="index.php">Single Order
                 <span class="sr-only">(current)</span>
               </a>
             </li>
@@ -91,7 +91,7 @@ position:absolute;
               <a class="nav-link waves-effect" href="multi.php">Multiple Orders</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link waves-effect" href="allocated.php"
+              <a class="nav-link waves-effect" href=""
                 target="_blank">Allocated</a>
             </li>
             <!-- <li class="nav-item">
@@ -102,19 +102,16 @@ position:absolute;
 
           <!-- Right -->
           <ul class="navbar-nav nav-flex-icons">
-
             <li class="nav-item">
               <a  class="nav-link waves-effect" target="_blank">
                 <?php echo $_SESSION["CURRENT_USER"]; ?>
               </a>
             </li>
-
             <li class="nav-item">
               <a  onclick="logout();" class="nav-link border border-light rounded waves-effect">
                 <i class="fas fa-sign-out-alt"></i>Logout
               </a>
             </li>
-            
           </ul>
 
         </div>
@@ -1232,7 +1229,7 @@ position:absolute;
   <br><br><br><br><br><br><br><br>
   <br><br><br><br><br><br><br><br>
   <!--Footer-->
-  <footer class="page-footer text-center font-small primary-color-dark darken-2 mt-4 wow fadeIn">
+  <footer  class="page-footer text-center font-small primary-color-dark darken-2 mt-4 wow fadeIn">
   <br><br><br><br>
     <!--Call to action-->
     <!-- <div class="pt-4">
@@ -1520,7 +1517,7 @@ position:absolute;
 
     
 <script src="js/user.js"></script>
-<script src="js/index.js"></script>
+<script src="js/multi.js"></script>
 
 </body>
 
