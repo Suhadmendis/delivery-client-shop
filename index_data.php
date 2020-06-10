@@ -65,65 +65,212 @@ if ($_GET["Command"] == "generate") {
 
     $objArray = Array();
 
-    $my_lat = "6.860507";
-    $my_lng = "79.872998";
+    $my_lat = $_GET['lat'];
+    $my_lng = $_GET['lng'];
 
-    $sql = "select * from m_order where status <> 'DONE' and rider_name = '" . $_SESSION["CURRENT_USER"] . "' or rider_name is null";
-    $result = $conn->query($sql);
-    $row = $result->fetchAll();
     
-    $shortest_trip_check = 1000000;
-    $shortest_trip = "";
-    for ($j=0; $j < sizeof($row) ; $j++) { 
-        $sqlshop = "select * from m_order_store where REF = '" . $row[$j]['REF'] . "'";
-        $result = $conn->query($sqlshop);
-        $rowshop = $result->fetchAll();
+
+
+    $sql = "select * from m_order where status = 'DELIVERY' and rider_name = '" . $_SESSION["CURRENT_USER"] . "' and delivery_type = 'MUL'";   
+    $result = $conn->query($sql);
+    $customers = $result->fetchAll();
+    
+  
+    if(sizeof($customers) > 0){
+        $sql = "select * from m_order where status = 'DELIVERY' and rider_name = '" . $_SESSION["CURRENT_USER"] . "' and delivery_type = 'MUL'";   
+        $result = $conn->query($sql);
+        $customers = $result->fetchAll();
+    }else{
+       $sql = "select * from m_order where status <> 'DONE' and status <> 'DELIVERED' and rider_name = '" . $_SESSION["CURRENT_USER"] . "' or rider_name is null";   
+        $result = $conn->query($sql);
+        $customers = $result->fetchAll();    
+    }
+    
+    
+  
+        
+
+
+    
+    for ($j=0; $j < sizeof($customers) ; $j++) { 
+
+        $sqlSub = "select * from m_order_store where REF = '" . $customers[$j]['REF'] . "'";   
+        $result = $conn->query($sqlSub);
+        $customers[$j]['shops'] = $result->fetchAll();
+
+
+        $response = file_get_contents('https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=' . $my_lat . ',' . $my_lng . '&destinations=' . $customers[$j]['lat'] . '%2C' . $customers[$j]['lng'] . '&key=AIzaSyClBKRU9iKfSLnXVTvdv11RvKwpCrfdoQI');
+        $response = json_decode($response);
+
+        $customers[$j]['distance'] = $response->rows[0]->elements[0]->distance->value;
+        $full_distance = 0;
+
+       
+    }
+    
+        $myArray = Array();
+        for ($x=0; $x < sizeof($customers) ; $x++) { 
+            array_push($myArray,$customers[$x]['distance']);
+        }
+        
+        sort($myArray);
+
+        $orderArray = Array();
+        for ($x=0; $x < sizeof($myArray) ; $x++) { 
+            for ($k=0; $k < sizeof($customers) ; $k++) { 
+                //selecting 1 stores
+                if($x < 1){
+                    if($myArray[$x] == $customers[$k]['distance']){
+                        array_push($orderArray,$customers[$k]);
+                    }
+                }
+            }
+        }
+
+        // print_r($orderArray);
+
+
+        $shopRefArray = Array();
+        for ($x=0; $x < sizeof($orderArray) ; $x++) { 
+            $sql = "select * from m_order_store where REF = '" . $orderArray[$x]['REF'] . "'";   
+            $result = $conn->query($sql);
+            $stores = $result->fetchAll();
+            
+            for ($j=0; $j < sizeof($stores) ; $j++) { 
+                array_push($shopRefArray, $stores[$j]['st_ref']);
+            }
+
+        }
+
+        // print_r(array_unique($shopRefArray));
+
+
+
+
+        
+        array_push($objArray,$orderArray);
+
+        $shopRefArray = array_unique($shopRefArray);
+
+        $shopRefArray = array_values($shopRefArray);
+        
+        for ($j=0; $j < sizeof($shopRefArray) ; $j++) { 
+
+            $sqlSub = "select * from m_store where REF = '" . $shopRefArray[$j] . "'"; 
+            // echo $sqlSub;  
+            // echo '---------------------------';  
+            $result = $conn->query($sqlSub);
+            $shopRefArray[$j] = $result->fetch();
+
+        }
+
+        array_push($objArray,$shopRefArray);
 
 
         
 
-        $des_sritng = $row[$j]['lat'].'%2C'.$row[$j]['lng'];
 
-        for ($i=0; $i < sizeof($rowshop) ; $i++) { 
-           
-                $des_sritng .= '%7C';
-                $des_sritng .= $rowshop[$i]['lat'].'%2C'.$rowshop[$i]['lng'];
+
+
+
+        $shopRefArray_temp = Array();
+
+        for ($j=0; $j < sizeof($shopRefArray) ; $j++) {
+            
+            
+            for ($X=0; $X < sizeof($orderArray) ; $X++) {
+                
+                $sqlSub = "select * from m_order_store where REF = '" . $orderArray[$X]['REF'] . "' and st_ref = '" . $shopRefArray[$j]['REF'] . "' and status = 'DELIVERY'"; 
+                $result = $conn->query($sqlSub);
+                $shop = $result->fetch();
+
+                if($shop['st_ref'] == ""){
+                    array_push($shopRefArray_temp,$shopRefArray[$j]['REF']);
+                }
+               
+            }
             
         }
 
-        $response = file_get_contents('https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=' . $my_lat . ',' . $my_lng . '&destinations=' . $des_sritng . '&key=AIzaSyClBKRU9iKfSLnXVTvdv11RvKwpCrfdoQI');
-        $response = json_decode($response);
+        $shopRefArray_temp = array_unique($shopRefArray_temp);
 
-        $elements = $response->rows[0]->elements;
-        $full_distance = 0;
-        for ($x=0; $x < sizeof($elements) ; $x++) { 
-            $full_distance = $full_distance + $elements[$x]->distance->value;
-        }
+
         
+        $shopRefArray = array_values($shopRefArray_temp);
+        // print_r(array_values($shopRefArray));
 
-        if($shortest_trip_check > $full_distance){
-            $shortest_trip_check = $full_distance;
-            $shortest_trip = $row[$j]['REF'];
+        for ($j=0; $j < sizeof($shopRefArray) ; $j++) { 
+
+            $sqlSub = "select * from m_store where REF = '" . $shopRefArray[$j] . "'";   
+            $result = $conn->query($sqlSub);
+            $shopRefArray[$j] = $result->fetch();
+
         }
+
+
+
+        $min_dur = 1000000;
+        $shortest_shop;
+
+        for ($j=0; $j < sizeof($shopRefArray) ; $j++) {
+            
+            $sqlSub = "select * from m_store where REF = '" . $shopRefArray[$j]['REF'] . "'";   
+            $result = $conn->query($sqlSub);
+            $shop = $result->fetch();
+
+            $response = file_get_contents('https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=' . $my_lat . ',' . $my_lng . '&destinations=' . $shop['loctaion_point_lat'] . '%2C' . $shop['loctaion_point_lng'] . '&key=AIzaSyClBKRU9iKfSLnXVTvdv11RvKwpCrfdoQI');
+            $response = json_decode($response);
+
+           
+
+            if($min_dur > $response->rows[0]->elements[0]->distance->value){
+                $min_dur = $response->rows[0]->elements[0]->distance->value;
+                $shortest_shop = $shop;
+                $shortest_shop['dura'] = $min_dur;
+
+            }
+           
+        }
+
+
         
-    }
-
-    
-
-
-    $sql = "select * from m_order where REF = '" . $shortest_trip . "'";
-    $result = $conn->query($sql);
-    $row = $result->fetch();
-
-
-
+        //check the shortest_shop is valid or not
+        $valid = 1;
+        for ($j=0; $j < sizeof($orderArray) ; $j++) {
+            for ($x=0; $x < sizeof($orderArray[$j]['shops']) ; $x++) {
+                if($orderArray[$j]['shops'][$x]['status'] != "DELIVERY"){
+                    $valid = 0;
+                }
+            }
+        }
 
 
+        if($valid == 1){
+            $shortest_shop = Array();
+        }
+
+        array_push($objArray,$shortest_shop);
 
 
-    array_push($objArray,$row);
 
-    echo json_encode($objArray);
+        echo json_encode($objArray);
+
+
+
+
+
+
+
+
+
+
+
+// https://maps.googleapis.com/maps/api/directions/json?origin=Adelaide,SA&destination=Adelaide,SA&waypoints=optimize:true|Barossa+Valley,SA|Clare,SA|Connawarra,SA|McLaren+Vale,SA&sensor=false&key=AIzaSyClBKRU9iKfSLnXVTvdv11RvKwpCrfdoQI
+
+
+// https://maps.googleapis.com/maps/api/directions/json?origin=6.851235,79.866670&destination=6.853749,79.885081&waypoints=optimize:true|6.844034,79.875597|6.839688,79.874009&key=AIzaSyClBKRU9iKfSLnXVTvdv11RvKwpCrfdoQI
+
+
 
 
         
@@ -194,65 +341,113 @@ if ($_GET["Command"] == "getLoc") {
 
 
 
-if ($_GET["Command"] == "changeRiderStatus") {
+if ($_GET["Command"] == "startRiderStatus") {
     
     try {
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $conn->beginTransaction();
 
-        $sql = "select status from m_order where REF = '" . $_GET['REF'] . "'";
-        $result = $conn->query($sql);
-        $row1 = $result->fetch();
+        // $sql = "select status from m_order where REF = '" . $_GET['REF'] . "'";
+        // $result = $conn->query($sql);
+        // $row1 = $result->fetch();
         
-        if($row1['status'] == "PLACE"){
-            $sql2 = "update m_order set status = '". $_GET['status'] ."' where REF = '" . $_GET['REF'] . "'";
-            $result = $conn->query($sql2);
-            $sql2 = "update m_order set rider_name = '". $_SESSION["CURRENT_USER"] ."' where REF = '" . $_GET['REF'] . "'";
-            $result = $conn->query($sql2);
-            $sql2 = "update m_order set delivery_type = 'SIN' where REF = '" . $_GET['REF'] . "'";
-            $result = $conn->query($sql2);
-        }
-        if($row1['status'] == "PICKUP"){
-            $sql2 = "update m_order set status = '". $_GET['status'] ."' where REF = '" . $_GET['REF'] . "'";
-            $result = $conn->query($sql2);
-        }
+        
+        // print_r($_GET);
+        $orders = json_decode($_GET['REFS']);
 
-        if($row1['status'] == "DROPOFF"){
-            $sql2 = "update m_order set status = '". $_GET['status'] ."' where REF = '" . $_GET['REF'] . "'";
+        for ($j=0; $j < sizeof($orders) ; $j++) { 
+            $sql2 = "update m_order set status = 'DELIVERY' where REF = '" . $orders[$j] . "'";
+            $result = $conn->query($sql2);
+            $sql2 = "update m_order set rider_name = '" . $_SESSION["CURRENT_USER"] . "' where REF = '" . $orders[$j] . "'";
+            $result = $conn->query($sql2);
+            $sql2 = "update m_order set delivery_type = 'MUL' where REF = '" . $orders[$j] . "'";
             $result = $conn->query($sql2);
         }
-
-        
-        // if($_GET['lat'] != ""){
-        //     $sql = "Insert into rider_route(rider, lat, lng)values
-        //                 ('".$_SESSION["CURRENT_USER"]."' ,'". $_GET['lat'] ."' ,'". $_GET['lng'] ."')";
-        //     $result = $conn->query($sql);
-        
-        //     $sql2 = "update user_mast_rider set lat = '" . $_GET['lat']. "' where user_name = '". $_SESSION["CURRENT_USER"] ."'";
-        //     $result = $conn->query($sql2);
-        //     $sql2 = "update user_mast_rider set lng = '" . $_GET['lng']. "' where user_name = '". $_SESSION["CURRENT_USER"] ."'";
-        //     $result = $conn->query($sql2);
-        
-        // }
         
 
 
-        $objArray = Array();
+        // $objArray = Array();
 
 
-        $sql = "select * from m_order where REF = '" . $_GET['REF'] . "' and status <> 'DONE'";
-        $result = $conn->query($sql);
-        $row = $result->fetch();
+        // $sql = "select * from m_order where REF = '" . $_GET['REF'] . "' and status <> 'DONE'";
+        // $result = $conn->query($sql);
+        // $row = $result->fetch();
 
-        array_push($objArray,$row);
+        // array_push($objArray,$row);
 
-        echo json_encode($objArray);
+        // echo json_encode($objArray);
 
 
-
+        echo 'DONE';
         $conn->commit();
     } catch (Exception $e) {
         $conn->rollBack();
         echo $e;
     }
 }
+
+
+if ($_GET["Command"] == "changeRiderStatus") {
+    
+    try {
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $conn->beginTransaction();
+
+       
+        $orders = json_decode($_GET['REFS']);
+
+        for ($j=0; $j < sizeof($orders) ; $j++) { 
+            $sql2 = "update m_order_store set status = 'DELIVERY' where REF = '" . $orders[$j] . "' and st_ref = '" . $_GET['shopRef'] . "'";
+            $result = $conn->query($sql2);
+            $sql2 = "update m_order_store set rider_name = '" . $_SESSION["CURRENT_USER"] . "' where REF = '" . $orders[$j] . "' and st_ref = '" . $_GET['shopRef'] . "'";
+            $result = $conn->query($sql2);
+            
+        }
+        
+
+
+       
+
+
+        echo 'DONE';
+        $conn->commit();
+    } catch (Exception $e) {
+        $conn->rollBack();
+        echo $e;
+    }
+}
+
+
+if ($_GET["Command"] == "dropOff") {
+    
+    try {
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $conn->beginTransaction();
+
+       
+        
+
+        
+        $sql2 = "update m_order set status = 'DELIVERED' where REF = '" . $_GET['ref'] . "'";
+        $result = $conn->query($sql2);
+         
+            
+        
+
+
+       
+
+
+        echo 'DONE';
+        $conn->commit();
+    } catch (Exception $e) {
+        $conn->rollBack();
+        echo $e;
+    }
+}
+
+
+
+
+
+

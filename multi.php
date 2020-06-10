@@ -196,7 +196,7 @@ position:absolute;
         <!--Grid column-->
 
         <!--Grid column-->
-        <div class="col-md-12 mb-4">
+        <div class="col-md-12 mb-4" style="display: none;">
 
           <!--Card-->
           <div class="card">
@@ -1225,9 +1225,12 @@ position:absolute;
     </div>
   </main>
   <!--Main layout-->
-
+  <br><br><br><br><br><br><br><br>
+  <br><br><br><br><br><br><br><br>
+  <br><br><br><br><br><br><br><br>
+  <br><br><br><br><br><br><br><br>
   <!--Footer-->
-  <footer class="page-footer text-center font-small primary-color-dark darken-2 mt-4 wow fadeIn">
+  <footer  class="page-footer text-center font-small primary-color-dark darken-2 mt-4 wow fadeIn">
   <br><br><br><br>
     <!--Call to action-->
     <!-- <div class="pt-4">

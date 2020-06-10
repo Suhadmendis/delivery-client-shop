@@ -3,42 +3,46 @@ var vue1 = new Vue({
   data: {
     OBJ: "",
     ORDERS: "",
+    SHOPS: "",
+    SHORTEST_SHOP: "",
+    loading: false,
     DONEORDERS: "",
     locationLat: "",
     locationLng: "",
   },
   mounted() {
-    // setInterval(() => {
-    //   if (navigator.geolocation) {
-    //     navigator.geolocation.getCurrentPosition(
-    //       function (position) {
-    //         if (position.coords.latitude) {
-    //           axios
-    //             .get(
-    //               "index_data.php?Command=route&lat=" +
-    //                 position.coords.latitude +
-    //                 "&lng=" +
-    //                 position.coords.longitude
-    //             )
-    //             .catch(function (error) {
-    //               console.log(error);
-    //             })
-    //             .then((response) => {
-                  
-    //             });
-    //         }
-    //       },
-    //       function () {}
-    //     );
-    //   }
-    // }, 10000);
+    setInterval(() => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function (position) {
+            if (position.coords.latitude) {
+              axios
+                .get(
+                  "index_data.php?Command=route&lat=" +
+                    position.coords.latitude +
+                    "&lng=" +
+                    position.coords.longitude
+                )
+                .catch(function (error) {
+                  console.log(error);
+                })
+                .then((response) => {
+
+                });
+            }
+          },
+          function () {}
+        );
+      }
+    }, 10000);
 
     //   alert("1");
-    // this.updateLoc();
+    this.updateLoc();
 
-    
-      this.orders();
-    
+      setTimeout(() => {
+        this.orders();      
+      }, 2000);
+
     this.doneOrders();
     // setInterval(() => {
     //   this.updateLoc();
@@ -58,7 +62,8 @@ var vue1 = new Vue({
       // }, 2000);
     },
     orders: function () {
-      console.log(this.locationLat + " : " + this.locationLng);
+      // console.log(this.locationLat + " : " + this.locationLng);
+      this.loading = true;
       axios
         .get(
           "index_data.php?Command=generate&lat=" +
@@ -68,7 +73,10 @@ var vue1 = new Vue({
         )
         .then((response) => {
           this.ORDERS = response.data[0];
-          console.log(response.data[0]);
+          this.SHOPS = response.data[1];
+          this.SHORTEST_SHOP = response.data[2];
+          this.loading = false;
+          // console.log(response.data[0]);
         });
     },
 
@@ -87,11 +95,9 @@ var vue1 = new Vue({
           // console.log(response.data[0][0].REF);
 
           for (var i = 0; i < this.ORDERS.length; i++) {
-            
             if (this.ORDERS[i].REF == response.data[0][0].REF) {
               this.ORDERS[i].distance = response.data[0][0].distance;
               this.ORDERS[i].status = response.data[0][0].status;
-              
             }
           }
           // console.log(response.data[0][0].distance);
@@ -103,22 +109,52 @@ var vue1 = new Vue({
         console.log(response.data[0]);
       });
     },
-    changeRiderStatus: function (Ref, status) {
+    dropOff: function (orderRef) {
+      axios
+        .get("index_data.php?Command=dropOff&ref=" + orderRef)
+        .then((response) => {
+          this.orders();
+        });
+    },
+    changeRiderStatus: function (orders) {
+      var ordersArray = [];
+      for (var i = 0; i < orders.length; i++) {
+        ordersArray.push(orders[i].REF);
+      }
+      ordersArray = JSON.stringify(ordersArray);
       axios
         .get(
-          "index_data.php?Command=changeRiderStatus&REF=" +
-            Ref +
-            "&status=" +
-            status
+          "index_data.php?Command=changeRiderStatus&REFS=" +
+            ordersArray +
+            "&shopRef=" +
+            this.SHORTEST_SHOP.REF
         )
         .then((response) => {
-          if (status == "DONE") {
-            this.doneOrders();
-            this.orders();
-
-          }
-
-          this.ORDERS = response.data[0];
+          console.log(response);
+          this.orders();
+        });
+    },
+    calprogress: function (shop) {
+      console.log(shop);
+      var count = 0;
+      for (var i = 0; i < shop.length; i++) {
+        if (shop[i].status == "DELIVERY") {
+          ++count;
+        }
+      }
+      return count;
+    },
+    startRiderStatus: function (orders) {
+      var ordersArray = [];
+      for (var i = 0; i < orders.length; i++) {
+        ordersArray.push(orders[i].REF);
+      }
+      ordersArray = JSON.stringify(ordersArray);
+      axios
+        .get("index_data.php?Command=startRiderStatus&REFS=" + ordersArray)
+        .then((response) => {
+          console.log(response);
+          this.orders();
         });
     },
     changeDistance: function () {

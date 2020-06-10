@@ -11,35 +11,37 @@ var vue1 = new Vue({
     locationLng: "",
   },
   mounted() {
-    // setInterval(() => {
-    //   if (navigator.geolocation) {
-    //     navigator.geolocation.getCurrentPosition(
-    //       function (position) {
-    //         if (position.coords.latitude) {
-    //           axios
-    //             .get(
-    //               "multi_data.php?Command=route&lat=" +
-    //                 position.coords.latitude +
-    //                 "&lng=" +
-    //                 position.coords.longitude
-    //             )
-    //             .catch(function (error) {
-    //               console.log(error);
-    //             })
-    //             .then((response) => {
+    setInterval(() => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function (position) {
+            if (position.coords.latitude) {
+              axios
+                .get(
+                  "multi_data.php?Command=route&lat=" +
+                    position.coords.latitude +
+                    "&lng=" +
+                    position.coords.longitude
+                )
+                .catch(function (error) {
+                  console.log(error);
+                })
+                .then((response) => {
 
-    //             });
-    //         }
-    //       },
-    //       function () {}
-    //     );
-    //   }
-    // }, 10000);
+                });
+            }
+          },
+          function () {}
+        );
+      }
+    }, 10000);
 
     //   alert("1");
     this.updateLoc();
 
-    this.orders();
+    setTimeout(() => {
+      this.orders();
+    }, 2000);
 
     this.doneOrders();
     // setInterval(() => {

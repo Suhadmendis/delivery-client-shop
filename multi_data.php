@@ -65,8 +65,8 @@ if ($_GET["Command"] == "generate") {
 
     $objArray = Array();
 
-    $my_lat = "6.860507";
-    $my_lng = "79.872998";
+    $my_lat = $_GET['lat'];
+    $my_lng = $_GET['lng'];
 
     
 
